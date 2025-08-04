@@ -65,6 +65,66 @@ spring.datasource.password=mercadia_password
    - URL: http://localhost:8080/mercadia
    - El sistema se ejecuta en el puerto 8080 con el contexto `/mercadia`
 
+## Pruebas y CI/CD
+
+### Ejecutar Tests Localmente
+
+```bash
+# Ejecutar todos los tests
+./mvnw test
+
+# Ejecutar tests específicos
+./mvnw test -Dtest=ProveedorTest
+
+# Ejecutar tests con reportes
+./mvnw clean test jacoco:report
+```
+
+### Integración Continua con Travis CI
+
+Este proyecto está configurado con Travis CI para ejecutar automáticamente las pruebas en cada push y pull request.
+
+**Configuración Travis CI:**
+- ✅ **Archivo configurado**: `.travis.yml`
+- ✅ **Tests automáticos**: Se ejecutan en Java 17
+- ✅ **Base de datos de prueba**: H2 en memoria
+- ✅ **Notificaciones**: Email en fallos
+
+**Estados de Build:**
+- [![Build Status](https://app.travis-ci.com/alexpardox/mercaproject.svg?branch=main)](https://app.travis-ci.com/alexpardox/mercaproject)
+
+**Para configurar Travis CI en tu fork:**
+
+1. **Conectar a Travis CI:**
+   - Ve a [travis-ci.com](https://travis-ci.com)
+   - Inicia sesión con tu cuenta de GitHub
+   - Autoriza Travis CI
+   - Activa el repositorio `mercaproject`
+
+2. **Variables de entorno (opcional):**
+   ```bash
+   # En la configuración de Travis CI del repositorio
+   DB_URL=jdbc:h2:mem:testdb
+   DB_USERNAME=sa
+   DB_PASSWORD=
+   ```
+
+3. **Badge en README:**
+   ```markdown
+   [![Build Status](https://app.travis-ci.com/TU_USUARIO/mercaproject.svg?branch=main)](https://app.travis-ci.com/TU_USUARIO/mercaproject)
+   ```
+
+### Tests Incluidos
+
+- **Tests de Entidad**: `ProveedorTest` - Validación del modelo de datos
+- **Tests de Integración**: `MercaApplicationTests` - Carga del contexto Spring
+- **Tests Básicos**: `BasicIntegrationTest` - Validaciones fundamentales
+
+**Cobertura de Tests:**
+- ✅ Modelo de Proveedor: Estados, validaciones, constructores
+- ✅ Contexto de Spring: Carga de aplicación y dependencias
+- ✅ Configuración de Base de Datos: H2 para tests, PostgreSQL para producción
+
 ## Usuarios de Prueba
 
 El sistema incluye usuarios de prueba que se crean automáticamente:
