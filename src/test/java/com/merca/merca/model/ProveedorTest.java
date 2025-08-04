@@ -1,5 +1,6 @@
-package com.merca.merca.entity;
+package com.merca.merca.model;
 
+import com.merca.merca.entity.Proveedor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
