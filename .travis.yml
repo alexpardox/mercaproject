@@ -1,0 +1,48 @@
+language: java
+
+# Especifica la versión de Java
+jdk:
+  - openjdk17
+
+# Sistema operativo
+os: linux
+dist: focal
+
+# Cache para Maven dependencies
+cache:
+  directories:
+    - $HOME/.m2
+
+# Variables de entorno para Travis
+env:
+  - DB_URL=jdbc:h2:mem:testdb
+  - DB_USERNAME=sa
+  - DB_PASSWORD=
+  - JWT_SECRET=test-secret-key-for-travis-ci-tests
+
+# Comandos antes de ejecutar el script
+before_script:
+  - echo "Configurando entorno de pruebas..."
+
+# Script principal (Maven ejecutará los tests automáticamente)
+script:
+  - mvn clean test
+  - mvn clean compile
+
+# Ejecutar después del éxito
+after_success:
+  - echo "Tests ejecutados exitosamente!"
+
+# Configuración de notificaciones
+notifications:
+  email:
+    recipients:
+      - alexpardox@gmail.com
+    on_success: change
+    on_failure: always
+
+# Ramas a incluir
+branches:
+  only:
+    - main
+    - develop
