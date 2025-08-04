@@ -279,7 +279,7 @@ Para contribuir al proyecto:
 
 ## Licencia
 
-Este proyecto es parte del sistema interno de Mercadía - Grupo Iconn.
+Este proyecto es parte del un programa profesional entre universidad y empresa privada.
 
 ## Contacto
 
@@ -287,4 +287,4 @@ Para soporte técnico o consultas sobre el sistema, contactar al equipo de desar
 
 ---
 
-**Nota**: Este sistema está diseñado para uso interno de Mercadía y contiene configuraciones específicas para el entorno de producción del Grupo Iconn.
+**Nota**: Este sistema está diseñado para proyecto final de Taller de productividad basada en herramientas tecnológicas
