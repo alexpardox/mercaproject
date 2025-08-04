@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/base :: head('Proveedor')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/base :: navbar}"></nav>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <main class="col-12">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2 text-mercadia">
+                        <i class="fas fa-truck"></i> 
+                        <span th:text="${proveedor.id != null ? 'Editar Proveedor' : 'Nuevo Proveedor'}">Nuevo Proveedor</span>
+                    </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a th:href="@{/proveedores}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver a Proveedores
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Alertas -->
+                <div th:replace="~{fragments/base :: alerts}"></div>
+                
+                <div class="row">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="card-mercadia">
+                            <div class="card-header-mercadia">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-edit"></i> Información del Proveedor
+                                </h5>
+                            </div>
+                            <div class="card-body-mercadia">
+                                <form th:action="@{${proveedor.id != null ? '/proveedores/' + proveedor.id + '/editar' : '/proveedores/nuevo'}}" 
+                                      th:object="${proveedor}" method="post">
+                                    
+                                    <div class="row">
+                                        <!-- Información Básica -->
+                                        <div class="col-md-6">
+                                            <h6 class="text-mercadia border-bottom-mercadia pb-2 mb-3">
+                                                <i class="fas fa-building"></i> Información Básica
+                                            </h6>
+                                            
+                                            <div class="mb-3">
+                                                <label for="nombre" class="form-label-mercadia">Nombre del Proveedor *</label>
+                                                <input type="text" class="form-control form-control-mercadia" 
+                                                       th:field="*{nombre}" id="nombre" required 
+                                                       placeholder="Ej: Coca-Cola FEMSA">
+                                                <div th:if="${#fields.hasErrors('nombre')}" 
+                                                     class="invalid-feedback d-block" th:errors="*{nombre}"></div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="rfc" class="form-label-mercadia">RFC *</label>
+                                                <input type="text" class="form-control form-control-mercadia" 
+                                                       th:field="*{rfc}" id="rfc" required 
+                                                       placeholder="Ej: ABC123456789"
+                                                       pattern="^[A-Z&Ñ]{3,4}[0-9]{6}[A-Z0-9]{3}$"
+                                                       title="El RFC debe tener formato válido: 3-4 letras, 6 dígitos, 3 caracteres alfanuméricos">
+                                                <div th:if="${#fields.hasErrors('rfc')}" 
+                                                     class="invalid-feedback d-block" th:errors="*{rfc}"></div>
+                                                <small class="form-text text-muted">
+                                                    Formato: ABC123456789 (3-4 letras, 6 dígitos, 3 caracteres)
+                                                </small>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="razonSocial" class="form-label-mercadia">Razón Social *</label>
+                                                <input type="text" class="form-control form-control-mercadia" 
+                                                       th:field="*{razonSocial}" id="razonSocial" required 
+                                                       placeholder="Ej: Coca-Cola FEMSA, S.A.B. de C.V.">
+                                                <div th:if="${#fields.hasErrors('razonSocial')}" 
+                                                     class="invalid-feedback d-block" th:errors="*{razonSocial}"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Información de Contacto -->
+                                        <div class="col-md-6">
+                                            <h6 class="text-mercadia border-bottom-mercadia pb-2 mb-3">
+                                                <i class="fas fa-address-book"></i> Información de Contacto
+                                            </h6>
+                                            
+                                            <div class="mb-3">
+                                                <label for="contactoPrincipal" class="form-label-mercadia">Contacto Principal *</label>
+                                                <input type="text" class="form-control form-control-mercadia" 
+                                                       th:field="*{contactoPrincipal}" id="contactoPrincipal" required 
+                                                       placeholder="Ej: Juan Pérez">
+                                                <div th:if="${#fields.hasErrors('contactoPrincipal')}" 
+                                                     class="invalid-feedback d-block" th:errors="*{contactoPrincipal}"></div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label-mercadia">Email</label>
+                                                <input type="email" class="form-control form-control-mercadia" 
+                                                       th:field="*{email}" id="email" 
+                                                       placeholder="contacto@empresa.com">
+                                                <div th:if="${#fields.hasErrors('email')}" 
+                                                     class="invalid-feedback d-block" th:errors="*{email}"></div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="telefono" class="form-label-mercadia">Teléfono</label>
+                                                <input type="tel" class="form-control form-control-mercadia" 
+                                                       th:field="*{telefono}" id="telefono" 
+                                                       placeholder="5555551234"
+                                                       pattern="^[0-9]{10}$"
+                                                       title="El teléfono debe tener 10 dígitos">
+                                                <div th:if="${#fields.hasErrors('telefono')}" 
+                                                     class="invalid-feedback d-block" th:errors="*{telefono}"></div>
+                                                <small class="form-text text-muted">
+                                                    Solo números, 10 dígitos
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <!-- Dirección -->
+                                        <div class="col-md-8">
+                                            <div class="mb-3">
+                                                <label for="direccion" class="form-label-mercadia">Dirección Completa</label>
+                                                <textarea class="form-control form-control-mercadia" 
+                                                          th:field="*{direccion}" id="direccion" rows="3" 
+                                                          placeholder="Ej: Av. Insurgentes Sur 1234, Colonia Del Valle, Ciudad de México"></textarea>
+                                                <div th:if="${#fields.hasErrors('direccion')}" 
+                                                     class="invalid-feedback d-block" th:errors="*{direccion}"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Estado -->
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="estado" class="form-label-mercadia">Estado</label>
+                                                <select class="form-select form-control-mercadia" 
+                                                        th:field="*{estado}" id="estado">
+                                                    <option th:each="estadoOption : ${estados}" 
+                                                            th:value="${estadoOption}" 
+                                                            th:text="${estadoOption}" 
+                                                            th:selected="${estadoOption == proveedor.estado}">
+                                                        Estado
+                                                    </option>
+                                                </select>
+                                                <div th:if="${#fields.hasErrors('estado')}" 
+                                                     class="invalid-feedback d-block" th:errors="*{estado}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Botones de Acción -->
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <a th:href="@{/proveedores}" class="btn btn-outline-secondary">
+                                                    <i class="fas fa-times"></i> Cancelar
+                                                </a>
+                                                <button type="submit" class="btn-primary-mercadia">
+                                                    <i class="fas fa-save"></i> 
+                                                    <span th:text="${proveedor.id != null ? 'Actualizar Proveedor' : 'Guardar Proveedor'}">
+                                                        Guardar Proveedor
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <div th:replace="~{fragments/base :: scripts}"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Validación en tiempo real para RFC
+            const rfcInput = document.getElementById('rfc');
+            if (rfcInput) {
+                rfcInput.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+            }
+            
+            // Validación en tiempo real para teléfono
+            const telefonoInput = document.getElementById('telefono');
+            if (telefonoInput) {
+                telefonoInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+                });
+            }
+            
+            // Autocompletar nombre de tienda basado en email
+            const emailInput = document.getElementById('email');
+            const nombreInput = document.getElementById('nombre');
+            
+            if (emailInput && nombreInput) {
+                emailInput.addEventListener('blur', function() {
+                    if (!nombreInput.value && this.value) {
+                        const domain = this.value.split('@')[1];
+                        if (domain) {
+                            const companyName = domain.split('.')[0];
+                            nombreInput.value = companyName.charAt(0).toUpperCase() + companyName.slice(1);
+                        }
+                    }
+                });
+            }
+            
+            // Validación del formulario antes de enviar
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const requiredFields = ['nombre', 'rfc', 'razonSocial', 'contactoPrincipal'];
+                    let isValid = true;
+                    
+                    requiredFields.forEach(field => {
+                        const input = document.getElementById(field);
+                        if (input && !input.value.trim()) {
+                            input.classList.add('is-invalid');
+                            isValid = false;
+                        } else if (input) {
+                            input.classList.remove('is-invalid');
+                        }
+                    });
+                    
+                    if (!isValid) {
+                        e.preventDefault();
+                        alert('Por favor complete todos los campos obligatorios');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

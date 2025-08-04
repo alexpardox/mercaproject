@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/base :: head('Iniciar Sesión')}"></head>
+
+<body class="d-flex align-items-center justify-content-center min-vh-100" 
+      style="background: linear-gradient(135deg, var(--light-gray) 0%, var(--medium-gray) 100%);">
+    
+    <!-- Partículas de fondo -->
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
+        <div style="position: absolute; top: 10%; left: 10%; width: 20px; height: 20px; 
+                    background: var(--primary-orange-alpha); border-radius: 50%; animation: pulse 3s infinite;"></div>
+        <div style="position: absolute; top: 20%; right: 15%; width: 15px; height: 15px; 
+                    background: var(--secondary-green-alpha); border-radius: 50%; animation: pulse 4s infinite;"></div>
+        <div style="position: absolute; bottom: 20%; left: 20%; width: 25px; height: 25px; 
+                    background: var(--accent-brown-alpha); border-radius: 50%; animation: pulse 5s infinite;"></div>
+        <div style="position: absolute; bottom: 10%; right: 10%; width: 18px; height: 18px; 
+                    background: var(--primary-orange-alpha); border-radius: 50%; animation: pulse 2s infinite;"></div>
+    </div>
+
+    <div class="container" style="position: relative; z-index: 1;">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <div class="card-mercadia text-center mb-4">
+                    <div class="card-header-mercadia">
+                        <div class="mb-3">
+                            <i class="fas fa-store" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        </div>
+                        <h3 class="mb-2">Mercadía</h3>
+                        <p class="mb-0 opacity-75">Sistema de Gestión de Espacios</p>
+                    </div>
+                    <div class="card-body-mercadia">
+                        <!-- Alertas -->
+                        <div th:replace="~{fragments/base :: alerts}"></div>
+                        
+                        <!-- Mensaje de error personalizado -->
+                        <div th:if="${param.error}" class="alert-error-mercadia mb-3">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Credenciales incorrectas. Verifique su usuario y contraseña.
+                        </div>
+                        
+                        <!-- Mensaje de logout -->
+                        <div th:if="${param.logout}" class="alert-success-mercadia mb-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            Ha cerrado sesión correctamente.
+                        </div>
+                        
+                        <!-- Mensaje de sesión expirada -->
+                        <div th:if="${param.expired}" class="alert-warning-mercadia mb-3">
+                            <i class="fas fa-clock me-2"></i>
+                            Su sesión ha expirado. Inicie sesión nuevamente.
+                        </div>
+                        
+                        <form th:action="@{/login}" method="post" id="loginForm">
+                            <div class="form-group-mercadia">
+                                <label for="username" class="form-label-mercadia">
+                                    <i class="fas fa-user me-2"></i> Usuario
+                                </label>
+                                <input type="text" class="form-control-mercadia" id="username" name="username" 
+                                       placeholder="Ingrese su usuario" required autocomplete="username">
+                            </div>
+                            
+                            <div class="form-group-mercadia">
+                                <label for="password" class="form-label-mercadia">
+                                    <i class="fas fa-lock me-2"></i> Contraseña
+                                </label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control-mercadia" id="password" name="password" 
+                                           placeholder="Ingrese su contraseña" required autocomplete="current-password">
+                                    <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y" 
+                                            style="border: none; background: none; color: var(--text-muted);" 
+                                            onclick="togglePassword()">
+                                        <i class="fas fa-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group-mercadia">
+                                <div class="form-check d-flex align-items-center">
+                                    <input type="checkbox" class="form-check-input me-2" id="remember-me" name="remember-me">
+                                    <label class="form-check-label" for="remember-me">
+                                        Recordarme
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn-primary-mercadia">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Usuarios de prueba -->
+                        <div class="mt-4 p-3" style="background: var(--light-gray); border-radius: var(--border-radius);">
+                            <small class="text-muted d-block mb-2">
+                                <i class="fas fa-info-circle me-1"></i> Usuarios de prueba:
+                            </small>
+                            <div class="d-flex flex-column gap-1">
+                                <small><strong>admin</strong> / password <span class="badge badge-accent-mercadia">Admin</span></small>
+                                <small><strong>comercial</strong> / password <span class="badge badge-primary-mercadia">Comercial</span></small>
+                                <small><strong>tienda001</strong> / password <span class="badge badge-secondary-mercadia">Tienda</span></small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center p-3" style="background: var(--light-gray); 
+                         border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);">
+                        <small class="text-muted">
+                            © 2025 Mercadía - Sistema Profesional de Retail
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <div th:replace="~{fragments/base :: scripts}"></div>
+    
+    <!-- JavaScript específico para login -->
+    <script>
+        // Función para mostrar/ocultar contraseña
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+        
+        // Validación del formulario en tiempo real
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            const username = document.getElementById('username');
+            const password = document.getElementById('password');
+            const submitButton = form.querySelector('button[type="submit"]');
+            
+            // Validación en tiempo real
+            username.addEventListener('input', function() {
+                if (this.value.length >= 3) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else {
+                    this.classList.remove('is-valid');
+                }
+            });
+            
+            password.addEventListener('input', function() {
+                if (this.value.length >= 4) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else {
+                    this.classList.remove('is-valid');
+                }
+            });
+            
+            // Mejorar el manejo del submit
+            form.addEventListener('submit', function(e) {
+                // Deshabilitar el botón inmediatamente al enviar
+                submitButton.disabled = true;
+                submitButton.classList.add('loading');
+                
+                // Si después de 10 segundos no se ha redirigido, rehabilitar el botón
+                setTimeout(() => {
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('loading');
+                }, 10000);
+            });
+            
+            // Autocompletado rápido con botones de usuario
+            document.querySelectorAll('.badge').forEach(badge => {
+                badge.style.cursor = 'pointer';
+                badge.addEventListener('click', function() {
+                    const text = this.parentElement.textContent;
+                    const userMatch = text.match(/(\w+)\s*\/\s*password/);
+                    if (userMatch) {
+                        username.value = userMatch[1];
+                        password.value = 'password';
+                        username.classList.add('is-valid');
+                        password.classList.add('is-valid');
+                    }
+                });
+            });
+            
+            // Efecto de focus en inputs
+            const inputs = document.querySelectorAll('.form-control-mercadia');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                    this.parentElement.style.transition = 'transform 0.2s ease';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

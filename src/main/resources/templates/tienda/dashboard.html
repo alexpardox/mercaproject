@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/base :: head('Dashboard Tienda')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/base :: navbar}"></nav>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <main class="col-12">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-store"></i> Dashboard de Tienda
+                        <span th:if="${tienda}" class="badge bg-primary" th:text="${tienda}"></span>
+                    </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <a th:href="@{/formularios/nuevo}" class="btn btn-mercadia">
+                                <i class="fas fa-plus"></i> Nuevo Formulario
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alertas -->
+                <div th:replace="~{fragments/base :: alerts}"></div>
+                
+                <!-- Estadísticas -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title">Formularios Activos</h6>
+                                        <h3 th:text="${totalActivos ?: 0}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-file-check fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-danger">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title">Formularios Vencidos</h6>
+                                        <h3 th:text="${totalVencidos ?: 0}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-file-times fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-warning text-dark">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title">Formularios Cancelados</h6>
+                                        <h3 th:text="${totalCancelados ?: 0}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-file-excel fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h6 class="card-title">Próximos a Vencer</h6>
+                                        <h3 th:text="${formulariosProximosAVencer != null ? #lists.size(formulariosProximosAVencer) : 0}">0</h3>
+                                    </div>
+                                    <div class="align-self-center">
+                                        <i class="fas fa-exclamation-triangle fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Formularios Activos -->
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header card-header-mercadia">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-file-check"></i> Formularios Activos Recientes
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div th:if="${formulariosActivos == null || #lists.isEmpty(formulariosActivos)}" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                    <p>No hay formularios activos</p>
+                                    <a th:href="@{/formularios/nuevo}" class="btn btn-mercadia">
+                                        <i class="fas fa-plus"></i> Crear Formulario
+                                    </a>
+                                </div>
+                                
+                                <div th:if="${formulariosActivos != null && !#lists.isEmpty(formulariosActivos)}" class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Proveedor</th>
+                                                <th>Área</th>
+                                                <th>Vigencia</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="formulario : ${formulariosActivos}" th:if="${formularioStat.index < 5}">
+                                                <td th:text="${formulario.proveedor.nombre}">Proveedor</td>
+                                                <td th:text="${formulario.areaAsignada}">Área</td>
+                                                <td>
+                                                    <small th:text="${#temporals.format(formulario.fechaInicio, 'dd/MM/yyyy')} + ' - ' + ${#temporals.format(formulario.fechaFin, 'dd/MM/yyyy')}">
+                                                        01/01/2024 - 31/12/2024
+                                                    </small>
+                                                </td>
+                                                <td>
+                                                    <a th:href="@{/formularios/{id}(id=${formulario.id})}" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <div class="text-center">
+                                        <a th:href="@{/formularios}" class="btn btn-outline-primary btn-sm">
+                                            Ver todos los formularios
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formularios Próximos a Vencer -->
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-exclamation-triangle"></i> Próximos a Vencer (7 días)
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div th:if="${formulariosProximosAVencer == null || #lists.isEmpty(formulariosProximosAVencer)}" class="text-center text-muted py-4">
+                                    <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+                                    <p>No hay formularios próximos a vencer</p>
+                                </div>
+                                
+                                <div th:if="${formulariosProximosAVencer != null && !#lists.isEmpty(formulariosProximosAVencer)}" class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Proveedor</th>
+                                                <th>Área</th>
+                                                <th>Vence</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="formulario : ${formulariosProximosAVencer}">
+                                                <td th:text="${formulario.proveedor.nombre}">Proveedor</td>
+                                                <td th:text="${formulario.areaAsignada}">Área</td>
+                                                <td>
+                                                    <span class="badge bg-warning text-dark" 
+                                                          th:text="${#temporals.format(formulario.fechaFin, 'dd/MM/yyyy')}">
+                                                        31/12/2024
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a th:href="@{/formularios/{id}(id=${formulario.id})}" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Accesos Rápidos -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header card-header-mercadia">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-rocket"></i> Accesos Rápidos
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <a th:href="@{/formularios/nuevo}" class="btn btn-outline-mercadia w-100 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fas fa-plus fa-2x mb-2"></i>
+                                            <span>Nuevo Formulario</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <a th:href="@{/formularios}" class="btn btn-outline-mercadia w-100 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fas fa-list fa-2x mb-2"></i>
+                                            <span>Mis Formularios</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <a th:href="@{/proveedores}" class="btn btn-outline-mercadia w-100 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fas fa-building fa-2x mb-2"></i>
+                                            <span>Ver Proveedores</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <a th:href="@{/tienda/formularios}" class="btn btn-outline-mercadia w-100 h-100 d-flex flex-column justify-content-center">
+                                            <i class="fas fa-chart-bar fa-2x mb-2"></i>
+                                            <span>Mis Reportes</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <footer th:replace="~{fragments/base :: footer}"></footer>
+    <div th:replace="~{fragments/base :: scripts}"></div>
+</body>
+</html>

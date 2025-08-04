@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/base :: head('Nuevo Formulario')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/base :: navbar}"></nav>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <main class="col-12">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-file-plus"></i> 
+                        <span th:text="${formulario.id != null ? 'Editar Formulario' : 'Nuevo Formulario'}">Nuevo Formulario</span>
+                    </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a th:href="@{/formularios}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Alertas -->
+                <div th:replace="~{fragments/base :: alerts}"></div>
+                
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header card-header-mercadia">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-edit"></i> Información del Formulario
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{${formulario.id != null ? '/formularios/' + formulario.id + '/editar' : '/formularios/nuevo'}}" 
+                                      th:object="${formulario}" method="post">
+                                    
+                                    <div class="row">
+                                        <!-- Información de la Tienda -->
+                                        <div class="col-md-6">
+                                            <h6 class="border-bottom pb-2 mb-3">
+                                                <i class="fas fa-store"></i> Información de la Tienda
+                                            </h6>
+                                            
+                                            <div class="mb-3">
+                                                <label for="nombreTienda" class="form-label">Nombre de la Tienda *</label>
+                                                <input type="text" class="form-control" th:field="*{nombreTienda}" 
+                                                       id="nombreTienda" required>
+                                                <div th:if="${#fields.hasErrors('nombreTienda')}" class="invalid-feedback d-block"
+                                                     th:errors="*{nombreTienda}"></div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="codigoTienda" class="form-label">Código de la Tienda *</label>
+                                                <input type="text" class="form-control" th:field="*{codigoTienda}" 
+                                                       id="codigoTienda" required>
+                                                <div th:if="${#fields.hasErrors('codigoTienda')}" class="invalid-feedback d-block"
+                                                     th:errors="*{codigoTienda}"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Información del Proveedor -->
+                                        <div class="col-md-6">
+                                            <h6 class="border-bottom pb-2 mb-3">
+                                                <i class="fas fa-building"></i> Información del Proveedor
+                                            </h6>
+                                            
+                                            <div class="mb-3">
+                                                <label for="proveedor" class="form-label">Proveedor *</label>
+                                                <select class="form-select" th:field="*{proveedor.id}" id="proveedor" required>
+                                                    <option value="">Seleccione un proveedor</option>
+                                                    <option th:each="prov : ${proveedores}" 
+                                                            th:value="${prov.id}" 
+                                                            th:text="${prov.nombre + ' (' + prov.rfc + ')'}">
+                                                        Proveedor
+                                                    </option>
+                                                </select>
+                                                <div th:if="${#fields.hasErrors('proveedor')}" class="invalid-feedback d-block"
+                                                     th:errors="*{proveedor}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <!-- Información del Espacio -->
+                                        <div class="col-md-6">
+                                            <h6 class="border-bottom pb-2 mb-3">
+                                                <i class="fas fa-map-marked-alt"></i> Información del Espacio
+                                            </h6>
+                                            
+                                            <div class="mb-3">
+                                                <label for="areaAsignada" class="form-label">Área Asignada *</label>
+                                                <input type="text" class="form-control" th:field="*{areaAsignada}" 
+                                                       id="areaAsignada" placeholder="Ej: Pasillo 1, Sección A" required>
+                                                <div th:if="${#fields.hasErrors('areaAsignada')}" class="invalid-feedback d-block"
+                                                     th:errors="*{areaAsignada}"></div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="tipoEspacio" class="form-label">Tipo de Espacio *</label>
+                                                <select class="form-select" th:field="*{tipoEspacio}" id="tipoEspacio" required>
+                                                    <option value="">Seleccione el tipo</option>
+                                                    <option th:each="tipo : ${tiposEspacio}" 
+                                                            th:value="${tipo}" 
+                                                            th:text="${tipo.descripcion}">
+                                                        Tipo
+                                                    </option>
+                                                </select>
+                                                <div th:if="${#fields.hasErrors('tipoEspacio')}" class="invalid-feedback d-block"
+                                                     th:errors="*{tipoEspacio}"></div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="metrosCuadrados" class="form-label">Metros Cuadrados</label>
+                                                        <input type="number" step="0.01" class="form-control" 
+                                                               th:field="*{metrosCuadrados}" id="metrosCuadrados" 
+                                                               placeholder="0.00">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="numeroProductos" class="form-label">Número de Productos</label>
+                                                        <input type="number" class="form-control" 
+                                                               th:field="*{numeroProductos}" id="numeroProductos" 
+                                                               placeholder="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Información de Vigencia -->
+                                        <div class="col-md-6">
+                                            <h6 class="border-bottom pb-2 mb-3">
+                                                <i class="fas fa-calendar-alt"></i> Vigencia y Precio
+                                            </h6>
+                                            
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="fechaInicio" class="form-label">Fecha de Inicio *</label>
+                                                        <input type="date" class="form-control" th:field="*{fechaInicio}" 
+                                                               id="fechaInicio" required>
+                                                        <div th:if="${#fields.hasErrors('fechaInicio')}" class="invalid-feedback d-block"
+                                                             th:errors="*{fechaInicio}"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="fechaFin" class="form-label">Fecha de Fin *</label>
+                                                        <input type="date" class="form-control" th:field="*{fechaFin}" 
+                                                               id="fechaFin" required>
+                                                        <div th:if="${#fields.hasErrors('fechaFin')}" class="invalid-feedback d-block"
+                                                             th:errors="*{fechaFin}"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="precioAcordado" class="form-label">Precio Acordado</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">$</span>
+                                                    <input type="number" step="0.01" class="form-control" 
+                                                           th:field="*{precioAcordado}" id="precioAcordado" 
+                                                           placeholder="0.00">
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Estado (solo para editar) -->
+                                            <div th:if="${formulario.id != null}" class="mb-3">
+                                                <label for="estado" class="form-label">Estado</label>
+                                                <select class="form-select" th:field="*{estado}" id="estado" 
+                                                        sec:authorize="hasAnyRole('ADMIN', 'COMERCIAL')">
+                                                    <option th:each="est : ${estados}" 
+                                                            th:value="${est}" 
+                                                            th:text="${est}">
+                                                        Estado
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Observaciones -->
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h6 class="border-bottom pb-2 mb-3">
+                                                <i class="fas fa-sticky-note"></i> Observaciones
+                                            </h6>
+                                            
+                                            <div class="mb-3">
+                                                <label for="observaciones" class="form-label">Observaciones</label>
+                                                <textarea class="form-control" th:field="*{observaciones}" 
+                                                          id="observaciones" rows="3" 
+                                                          placeholder="Información adicional sobre el acuerdo..."></textarea>
+                                                <div th:if="${#fields.hasErrors('observaciones')}" class="invalid-feedback d-block"
+                                                     th:errors="*{observaciones}"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Botones -->
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <hr>
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-mercadia">
+                                                    <i class="fas fa-save"></i> 
+                                                    <span th:text="${formulario.id != null ? 'Actualizar' : 'Guardar'}">Guardar</span>
+                                                </button>
+                                                <a th:href="@{/formularios}" class="btn btn-secondary">
+                                                    <i class="fas fa-times"></i> Cancelar
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Panel de Ayuda -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-info-circle"></i> Ayuda
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <h6>Instrucciones:</h6>
+                                <ul class="small">
+                                    <li>Complete todos los campos marcados con (*)</li>
+                                    <li>Seleccione el proveedor de la lista</li>
+                                    <li>Especifique el área exacta dentro de la tienda</li>
+                                    <li>La fecha de fin debe ser posterior a la fecha de inicio</li>
+                                    <li>El precio es opcional pero recomendado</li>
+                                </ul>
+                                
+                                <hr>
+                                
+                                <h6>Tipos de Espacio:</h6>
+                                <ul class="small">
+                                    <li><strong>Góndola:</strong> Estanterías principales</li>
+                                    <li><strong>Exhibidor:</strong> Displays especiales</li>
+                                    <li><strong>Refrigerador:</strong> Área refrigerada</li>
+                                    <li><strong>Congelador:</strong> Área congelada</li>
+                                    <li><strong>Caja:</strong> Área de cajas registradoras</li>
+                                    <li><strong>Entrada:</strong> Zona de entrada</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <footer th:replace="~{fragments/base :: footer}"></footer>
+    <div th:replace="~{fragments/base :: scripts}"></div>
+    
+    <script>
+        // Validación de fechas en el cliente
+        document.getElementById('fechaInicio').addEventListener('change', function() {
+            const fechaInicio = this.value;
+            const fechaFin = document.getElementById('fechaFin');
+            
+            if (fechaInicio) {
+                fechaFin.min = fechaInicio;
+                if (fechaFin.value && fechaFin.value < fechaInicio) {
+                    fechaFin.value = '';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

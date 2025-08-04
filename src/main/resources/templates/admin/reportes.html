@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/base :: head('Reportes - Administrador')}"></head>
+
+<body>
+    <div th:replace="~{fragments/base :: navbar}"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>Panel de Administración</span>
+                    </h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/dashboard}">
+                                <i class="fas fa-home"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/usuarios}">
+                                <i class="fas fa-users"></i> Usuarios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/proveedores}">
+                                <i class="fas fa-building"></i> Proveedores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/formularios}">
+                                <i class="fas fa-file-alt"></i> Formularios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" th:href="@{/admin/reportes}">
+                                <i class="fas fa-chart-bar"></i> Reportes
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Reportes del Sistema</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-success">
+                                <i class="fas fa-file-excel"></i> Exportar Excel
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger">
+                                <i class="fas fa-file-pdf"></i> Exportar PDF
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()">
+                                <i class="fas fa-print"></i> Imprimir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros de fecha -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form method="GET" th:action="@{/admin/reportes}">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                                    <input type="date" class="form-control" id="fechaInicio" name="fechaInicio">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="fechaFin" class="form-label">Fecha Fin</label>
+                                    <input type="date" class="form-control" id="fechaFin" name="fechaFin">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="tipoReporte" class="form-label">Tipo de Reporte</label>
+                                    <select class="form-select" id="tipoReporte" name="tipo">
+                                        <option value="general">Reporte General</option>
+                                        <option value="proveedores">Proveedores</option>
+                                        <option value="formularios">Formularios</option>
+                                        <option value="usuarios">Usuarios</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">&nbsp;</label>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-chart-line"></i> Generar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Resumen ejecutivo -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Resumen Ejecutivo</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 text-center">
+                                        <h3 class="text-primary" th:text="${proveedores.size()}">0</h3>
+                                        <p class="text-muted">Proveedores Registrados</p>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <h3 class="text-success" th:text="${formularios.size()}">0</h3>
+                                        <p class="text-muted">Formularios Procesados</p>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <h3 class="text-info" th:text="${#lists.size(proveedores.?[estado.name() == 'ACTIVO'])}">0</h3>
+                                        <p class="text-muted">Proveedores Activos</p>
+                                    </div>
+                                    <div class="col-md-3 text-center">
+                                        <h3 class="text-warning" th:text="${#lists.size(formularios.?[estado.name() == 'PENDIENTE_APROBACION'])}">0</h3>
+                                        <p class="text-muted">Formularios Pendientes</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reportes por sección -->
+                <div class="row">
+                    <!-- Reporte de Proveedores -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="m-0 font-weight-bold text-primary">Proveedores por Estado</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Estado</th>
+                                                <th>Cantidad</th>
+                                                <th>Porcentaje</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <span class="badge bg-success">Activos</span>
+                                                </td>
+                                                <td th:text="${#lists.size(proveedores.?[estado.name() == 'ACTIVO'])}">0</td>
+                                                <td th:text="${proveedores.size() > 0 ? (#lists.size(proveedores.?[estado.name() == 'ACTIVO']) * 100 / proveedores.size()) + '%' : '0%'}">0%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="badge bg-warning">Inactivos</span>
+                                                </td>
+                                                <td th:text="${#lists.size(proveedores.?[estado.name() == 'INACTIVO'])}">0</td>
+                                                <td th:text="${proveedores.size() > 0 ? (#lists.size(proveedores.?[estado.name() == 'INACTIVO']) * 100 / proveedores.size()) + '%' : '0%'}">0%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="badge bg-danger">Suspendidos</span>
+                                                </td>
+                                                <td th:text="${#lists.size(proveedores.?[estado.name() == 'SUSPENDIDO'])}">0</td>
+                                                <td th:text="${proveedores.size() > 0 ? (#lists.size(proveedores.?[estado.name() == 'SUSPENDIDO']) * 100 / proveedores.size()) + '%' : '0%'}">0%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte de Formularios -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="m-0 font-weight-bold text-primary">Formularios por Estado</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Estado</th>
+                                                <th>Cantidad</th>
+                                                <th>Porcentaje</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <span class="badge bg-warning">Pendientes</span>
+                                                </td>
+                                                <td th:text="${#lists.size(formularios.?[estado.name() == 'PENDIENTE_APROBACION'])}">0</td>
+                                                <td th:text="${formularios.size() > 0 ? (#lists.size(formularios.?[estado.name() == 'PENDIENTE_APROBACION']) * 100 / formularios.size()) + '%' : '0%'}">0%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="badge bg-success">Activos</span>
+                                                </td>
+                                                <td th:text="${#lists.size(formularios.?[estado.name() == 'ACTIVO'])}">0</td>
+                                                <td th:text="${formularios.size() > 0 ? (#lists.size(formularios.?[estado.name() == 'ACTIVO']) * 100 / formularios.size()) + '%' : '0%'}">0%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="badge bg-danger">Cancelados</span>
+                                                </td>
+                                                <td th:text="${#lists.size(formularios.?[estado.name() == 'CANCELADO'])}">0</td>
+                                                <td th:text="${formularios.size() > 0 ? (#lists.size(formularios.?[estado.name() == 'CANCELADO']) * 100 / formularios.size()) + '%' : '0%'}">0%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <span class="badge bg-secondary">Vencidos</span>
+                                                </td>
+                                                <td th:text="${#lists.size(formularios.?[estado.name() == 'VENCIDO'])}">0</td>
+                                                <td th:text="${formularios.size() > 0 ? (#lists.size(formularios.?[estado.name() == 'VENCIDO']) * 100 / formularios.size()) + '%' : '0%'}">0%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Listado detallado -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="m-0 font-weight-bold text-primary">Actividad Reciente</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>Tipo</th>
+                                                <th>Descripción</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Mostrar proveedores recientes -->
+                                            <tr th:each="proveedor : ${proveedores}" th:if="${proveedorStat.index < 5}">
+                                                <td th:text="${#temporals.format(proveedor.fechaRegistro, 'dd/MM/yyyy')}">01/01/2025</td>
+                                                <td><span class="badge bg-info">Proveedor</span></td>
+                                                <td th:text="'Registro de proveedor: ' + ${proveedor.nombre}">Descripción</td>
+                                                <td>
+                                                    <span class="badge bg-success" th:if="${proveedor.estado.name() == 'ACTIVO'}">Activo</span>
+                                                    <span class="badge bg-warning" th:if="${proveedor.estado.name() == 'INACTIVO'}">Inactivo</span>
+                                                    <span class="badge bg-danger" th:if="${proveedor.estado.name() == 'SUSPENDIDO'}">Suspendido</span>
+                                                </td>
+                                            </tr>
+                                            <!-- Mostrar formularios recientes -->
+                                            <tr th:each="formulario : ${formularios}" th:if="${formularioStat.index < 5}">
+                                                <td th:text="${#temporals.format(formulario.fechaCreacion, 'dd/MM/yyyy')}">01/01/2025</td>
+                                                <td><span class="badge bg-warning">Formulario</span></td>
+                                                <td th:text="'Formulario para tienda ' + ${formulario.codigoTienda} + ' - ' + ${formulario.proveedor.nombre}">Descripción</td>
+                                                <td>
+                                                    <span class="badge bg-warning" th:if="${formulario.estado.name() == 'PENDIENTE_APROBACION'}">Pendiente</span>
+                                                    <span class="badge bg-success" th:if="${formulario.estado.name() == 'ACTIVO'}">Activo</span>
+                                                    <span class="badge bg-danger" th:if="${formulario.estado.name() == 'CANCELADO'}">Cancelado</span>
+                                                    <span class="badge bg-secondary" th:if="${formulario.estado.name() == 'VENCIDO'}">Vencido</span>
+                                                </td>
+                                            </tr>
+                                            <tr th:if="${#lists.isEmpty(proveedores) && #lists.isEmpty(formularios)}">
+                                                <td colspan="4" class="text-center text-muted py-4">
+                                                    <i class="fas fa-chart-line fa-3x mb-3 text-muted"></i>
+                                                    <br>No hay actividad reciente para mostrar
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/base :: scripts}"></div>
+
+    <script>
+        // Establecer fecha de hoy como fecha fin por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fechaFin').value = today;
+            
+            // Establecer fecha de hace 30 días como fecha inicio por defecto
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            document.getElementById('fechaInicio').value = thirtyDaysAgo.toISOString().split('T')[0];
+        });
+    </script>
+
+    <style>
+        .sidebar .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .card-header h6 {
+            margin-bottom: 0;
+        }
+        .table th {
+            border-top: none;
+        }
+    </style>
+</body>
+</html>

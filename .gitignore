@@ -1,0 +1,97 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### =========================================
+### CONFIGURACIÓN DE ENTORNO Y SEGURIDAD
+### =========================================
+
+# Archivos de configuración con credenciales
+.env
+.env.local
+.env.production
+.env.staging
+application-production.properties
+application-local.properties
+
+# Archivos de configuración específicos
+config/database.properties
+config/secrets.properties
+
+# Logs de aplicación
+logs/
+*.log
+*.log.*
+
+# Archivos temporales
+temp/
+tmp/
+*.tmp
+
+# Archivos de respaldo de base de datos
+*.sql.backup
+*.dump
+
+### =========================================
+### ARCHIVOS DE DESARROLLO
+### =========================================
+
+# Archivos de documentación temporal
+NOTES.md
+TODO.md
+DEVELOPMENT.md
+
+# Directorios de uploads/archivos
+uploads/
+files/
+documents/
+
+### =========================================
+### SISTEMA OPERATIVO
+### =========================================
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~

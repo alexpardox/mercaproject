@@ -1,0 +1,254 @@
+/*
+===============================================
+MERCADÍA - UTILIDADES RESPONSIVAS ADICIONALES
+===============================================
+*/
+
+/* === MEJORAS RESPONSIVAS === */
+.responsive-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.responsive-table table {
+    min-width: 600px;
+}
+
+/* === CARDS RESPONSIVAS === */
+@media (max-width: 576px) {
+    .card-mercadia {
+        margin-bottom: 1rem;
+        border-radius: var(--border-radius);
+    }
+    
+    .card-header-mercadia {
+        padding: 1rem;
+        font-size: var(--font-size-base);
+    }
+    
+    .card-body-mercadia {
+        padding: 1rem;
+    }
+    
+    .btn-primary-mercadia,
+    .btn-secondary-mercadia,
+    .btn-accent-mercadia {
+        font-size: var(--font-size-sm);
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* === NAVEGACIÓN MÓVIL === */
+@media (max-width: 992px) {
+    .navbar-nav-mercadia {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: var(--border-radius);
+        margin-top: 1rem;
+        padding: 0.5rem;
+    }
+    
+    .navbar-nav-mercadia .nav-link {
+        margin: 0.25rem 0;
+        padding: 0.75rem 1rem !important;
+    }
+}
+
+/* === FORMULARIOS MÓVILES === */
+@media (max-width: 768px) {
+    .form-group-mercadia {
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-control-mercadia {
+        font-size: 16px; /* Evita zoom en iOS */
+        padding: 0.875rem 1rem;
+    }
+    
+    .form-label-mercadia {
+        font-size: var(--font-size-base);
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* === ESPACIADO RESPONSIVO === */
+.spacing-responsive {
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    .spacing-responsive {
+        padding: 1.5rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .spacing-responsive {
+        padding: 2rem;
+    }
+}
+
+/* === TEXTO RESPONSIVO === */
+@media (max-width: 576px) {
+    h1 { font-size: var(--font-size-xl); }
+    h2 { font-size: var(--font-size-lg); }
+    h3 { font-size: var(--font-size-base); }
+    h4, h5, h6 { font-size: var(--font-size-sm); }
+}
+
+/* === UTILIDADES DE DISPLAY === */
+.d-mobile-none {
+    display: initial;
+}
+
+@media (max-width: 768px) {
+    .d-mobile-none {
+        display: none !important;
+    }
+}
+
+.d-mobile-block {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .d-mobile-block {
+        display: block !important;
+    }
+}
+
+/* === GRID RESPONSIVO === */
+.grid-responsive {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+    .grid-responsive {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .grid-responsive {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+}
+
+/* === MEJORAS DE ACCESIBILIDAD === */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Focus visible mejorado */
+.btn-primary-mercadia:focus-visible,
+.btn-secondary-mercadia:focus-visible,
+.btn-accent-mercadia:focus-visible,
+.form-control-mercadia:focus-visible {
+    outline: 2px solid var(--primary-orange);
+    outline-offset: 2px;
+}
+
+/* === ESTADOS DE CARGA === */
+.skeleton {
+    background: linear-gradient(90deg, var(--medium-gray) 25%, var(--light-gray) 50%, var(--medium-gray) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* === TOOLTIPS MEJORADOS === */
+[data-bs-toggle="tooltip"] {
+    cursor: help;
+}
+
+/* === PRINT STYLES === */
+@media print {
+    .sidebar-wrapper,
+    .navbar-mercadia,
+    .btn-primary-mercadia,
+    .btn-secondary-mercadia,
+    .btn-accent-mercadia {
+        display: none !important;
+    }
+    
+    .card-mercadia {
+        box-shadow: none !important;
+        border: 1px solid var(--dark-gray) !important;
+    }
+    
+    .content-wrapper {
+        padding: 0 !important;
+        max-width: none !important;
+    }
+}
+
+/* === DARK MODE SUPPORT === */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --white: #1a1a1a;
+        --light-gray: #2d2d2d;
+        --medium-gray: #404040;
+        --text-dark: #e0e0e0;
+        --text-muted: #b0b0b0;
+    }
+    
+    /* Solo aplicar si no hay clase específica de modo claro */
+    body:not(.light-mode) {
+        background-color: var(--light-gray);
+        color: var(--text-dark);
+    }
+}
+
+/* === CUSTOM SCROLLBAR === */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-orange);
+    border-radius: var(--border-radius);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-orange-dark);
+}
+
+/* === SMOOTH SCROLLING === */
+html {
+    scroll-behavior: smooth;
+}
+
+/* === SELECTION COLORS === */
+::selection {
+    background: var(--primary-orange-alpha);
+    color: var(--primary-orange-dark);
+}
+
+::-moz-selection {
+    background: var(--primary-orange-alpha);
+    color: var(--primary-orange-dark);
+}

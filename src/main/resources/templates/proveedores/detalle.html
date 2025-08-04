@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/base :: head('Detalle del Proveedor')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/base :: navbar}"></nav>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <main class="col-12">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2 text-mercadia">
+                        <i class="fas fa-truck"></i> 
+                        <span th:text="${proveedor.nombre}">Detalle del Proveedor</span>
+                    </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <a th:href="@{/proveedores}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver a Proveedores
+                            </a>
+                            <a th:href="@{/proveedores/{id}/editar(id=${proveedor.id})}" 
+                               class="btn btn-outline-warning"
+                               sec:authorize="hasAnyRole('ADMIN', 'COMERCIAL')">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alertas -->
+                <div th:replace="~{fragments/base :: alerts}"></div>
+                
+                <div class="row">
+                    <!-- Información Principal -->
+                    <div class="col-lg-8">
+                        <div class="card-mercadia mb-4">
+                            <div class="card-header-mercadia">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-info-circle"></i> Información del Proveedor
+                                </h5>
+                            </div>
+                            <div class="card-body-mercadia">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-mercadia border-bottom-mercadia pb-2 mb-3">
+                                            <i class="fas fa-building"></i> Datos Empresariales
+                                        </h6>
+                                        
+                                        <div class="mb-3">
+                                            <strong class="text-muted">Nombre:</strong>
+                                            <p th:text="${proveedor.nombre}" class="mb-1">Nombre del Proveedor</p>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <strong class="text-muted">RFC:</strong>
+                                            <p th:text="${proveedor.rfc}" class="mb-1 font-monospace">RFC123456789</p>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <strong class="text-muted">Razón Social:</strong>
+                                            <p th:text="${proveedor.razonSocial}" class="mb-1">Razón Social Completa</p>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <strong class="text-muted">Estado:</strong>
+                                            <span class="badge ms-2"
+                                                  th:classappend="${proveedor.estado == T(com.merca.merca.entity.Proveedor.Estado).ACTIVO ? 'bg-success' : 
+                                                                 proveedor.estado == T(com.merca.merca.entity.Proveedor.Estado).INACTIVO ? 'bg-secondary' : 'bg-warning text-dark'}"
+                                                  th:text="${proveedor.estado}">
+                                                ACTIVO
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <h6 class="text-mercadia border-bottom-mercadia pb-2 mb-3">
+                                            <i class="fas fa-address-book"></i> Información de Contacto
+                                        </h6>
+                                        
+                                        <div class="mb-3">
+                                            <strong class="text-muted">Contacto Principal:</strong>
+                                            <p th:text="${proveedor.contactoPrincipal}" class="mb-1">Contacto Principal</p>
+                                        </div>
+                                        
+                                        <div class="mb-3" th:if="${proveedor.email}">
+                                            <strong class="text-muted">Email:</strong>
+                                            <p class="mb-1">
+                                                <a th:href="'mailto:' + ${proveedor.email}" 
+                                                   th:text="${proveedor.email}" 
+                                                   class="link-mercadia">email@proveedor.com</a>
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="mb-3" th:if="${proveedor.telefono}">
+                                            <strong class="text-muted">Teléfono:</strong>
+                                            <p class="mb-1">
+                                                <a th:href="'tel:' + ${proveedor.telefono}" 
+                                                   th:text="${proveedor.telefono}" 
+                                                   class="link-mercadia">5555551234</a>
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="mb-3" th:if="${proveedor.direccion}">
+                                            <strong class="text-muted">Dirección:</strong>
+                                            <p th:text="${proveedor.direccion}" class="mb-1">Dirección completa</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Formularios Asociados -->
+                        <div class="card-mercadia" th:if="${proveedor.formularios != null and !#lists.isEmpty(proveedor.formularios)}">
+                            <div class="card-header-mercadia">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-file-alt"></i> Formularios Asociados
+                                    <span class="badge bg-primary ms-2" th:text="${#lists.size(proveedor.formularios)}">0</span>
+                                </h5>
+                            </div>
+                            <div class="card-body-mercadia">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Tienda</th>
+                                                <th>Fecha Inicio</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="formulario : ${proveedor.formularios}">
+                                                <td th:text="${formulario.nombreTienda}">Tienda</td>
+                                                <td th:text="${#temporals.format(formulario.fechaInicio, 'dd/MM/yyyy')}">01/01/2024</td>
+                                                <td>
+                                                    <span class="badge"
+                                                          th:classappend="${formulario.estado == T(com.merca.merca.entity.Formulario.Estado).ACTIVO ? 'bg-success' : 
+                                                                         formulario.estado == T(com.merca.merca.entity.Formulario.Estado).VENCIDO ? 'bg-danger' : 'bg-secondary'}"
+                                                          th:text="${formulario.estado}">
+                                                        ACTIVO
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a th:href="@{/formularios/{id}(id=${formulario.id})}" 
+                                                       class="btn btn-sm btn-outline-primary" title="Ver detalle">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Panel de Acciones -->
+                    <div class="col-lg-4">
+                        <div class="card-mercadia">
+                            <div class="card-header-mercadia">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-cogs"></i> Acciones
+                                </h5>
+                            </div>
+                            <div class="card-body-mercadia">
+                                <div class="d-grid gap-2">
+                                    <!-- Editar -->
+                                    <a th:href="@{/proveedores/{id}/editar(id=${proveedor.id})}" 
+                                       class="btn btn-outline-warning"
+                                       sec:authorize="hasAnyRole('ADMIN', 'COMERCIAL')">
+                                        <i class="fas fa-edit"></i> Editar Proveedor
+                                    </a>
+                                    
+                                    <!-- Cambiar Estado -->
+                                    <div th:if="${proveedor.estado == T(com.merca.merca.entity.Proveedor.Estado).ACTIVO}"
+                                         sec:authorize="hasAnyRole('ADMIN', 'COMERCIAL')">
+                                        <form th:action="@{/proveedores/{id}/desactivar(id=${proveedor.id})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-secondary w-100"
+                                                    onclick="return confirm('¿Está seguro de desactivar este proveedor?')">
+                                                <i class="fas fa-pause"></i> Desactivar
+                                            </button>
+                                        </form>
+                                    </div>
+                                    
+                                    <div th:if="${proveedor.estado == T(com.merca.merca.entity.Proveedor.Estado).INACTIVO}"
+                                         sec:authorize="hasAnyRole('ADMIN', 'COMERCIAL')">
+                                        <form th:action="@{/proveedores/{id}/activar(id=${proveedor.id})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-success w-100">
+                                                <i class="fas fa-play"></i> Activar
+                                            </button>
+                                        </form>
+                                    </div>
+                                    
+                                    <div th:if="${proveedor.estado != T(com.merca.merca.entity.Proveedor.Estado).SUSPENDIDO}"
+                                         sec:authorize="hasRole('ADMIN')">
+                                        <form th:action="@{/proveedores/{id}/suspender(id=${proveedor.id})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-warning w-100"
+                                                    onclick="return confirm('¿Está seguro de suspender este proveedor?')">
+                                                <i class="fas fa-ban"></i> Suspender
+                                            </button>
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- Eliminar (solo si no tiene formularios) -->
+                                    <div th:if="${proveedor.formularios == null or #lists.isEmpty(proveedor.formularios)}"
+                                         sec:authorize="hasRole('ADMIN')">
+                                        <hr>
+                                        <form th:action="@{/proveedores/{id}/eliminar(id=${proveedor.id})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-outline-danger w-100"
+                                                    onclick="return confirm('¿Está seguro de eliminar este proveedor? Esta acción no se puede deshacer.')">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Información de Fechas -->
+                        <div class="card-mercadia mt-3">
+                            <div class="card-header-mercadia">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-calendar"></i> Información de Fechas
+                                </h6>
+                            </div>
+                            <div class="card-body-mercadia">
+                                <div class="mb-2">
+                                    <strong class="text-muted">Fecha de Registro:</strong>
+                                    <p class="mb-1" th:text="${#temporals.format(proveedor.fechaRegistro, 'dd/MM/yyyy HH:mm')}">
+                                        01/01/2024 10:00
+                                    </p>
+                                </div>
+                                
+                                <div th:if="${proveedor.fechaActualizacion}">
+                                    <strong class="text-muted">Última Actualización:</strong>
+                                    <p class="mb-1" th:text="${#temporals.format(proveedor.fechaActualizacion, 'dd/MM/yyyy HH:mm')}">
+                                        01/01/2024 15:30
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <div th:replace="~{fragments/base :: scripts}"></div>
+</body>
+</html>
