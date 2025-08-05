@@ -1,24 +1,25 @@
 language: java
 
-# Configuración de JDK según documentación oficial
 jdk:
   - openjdk17
 
-# Instalación de dependencias (requerido por documentación)
+# Travis CI requires explicit install and script phases
 install:
-  - mvn install -DskipTests=true -B -V
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
-# Test básico sin dependencias
 script:
-  - mvn test -Dtest="SimpleTest" -q
+  - mvn test -Dtest="SimpleTest"
 
-# Cache Maven
+# Cache Maven dependencies
 cache:
   directories:
     - $HOME/.m2
 
-# Solo incluir estas ramas
+# Build only these branches
 branches:
   only:
-    - main
     - develop
+    - main
+
+# Ensure build runs on all pull requests and pushes
+if: type IN (push, pull_request)
