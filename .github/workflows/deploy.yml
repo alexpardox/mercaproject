@@ -1,0 +1,66 @@
+name: Production Deploy
+
+# Solo ejecutar en main/master para deployment
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch: # Permite ejecución manual
+
+# Permisos para deployment
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  test-and-deploy:
+    name: Test and Deploy to Production
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+        
+    - name: Run all tests
+      run: |
+        echo "🧪 Running all tests..."
+        mvn test
+        echo "✅ All tests passed!"
+        
+    - name: Build production package
+      run: |
+        echo "📦 Building production package..."
+        mvn clean package -DskipTests
+        echo "✅ Production package built!"
+        
+    - name: Create release artifact
+      run: |
+        mkdir -p release
+        cp target/*.jar release/
+        cp src/main/resources/application.properties release/
+        echo "📋 Release created with:"
+        ls -la release/
+        
+    - name: Upload production artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: production-release
+        path: release/
+        retention-days: 30
+        
+    - name: Deploy notification
+      run: |
+        echo "🚀 Deployment to production completed!"
+        echo "📊 Artifact uploaded and ready for deployment"

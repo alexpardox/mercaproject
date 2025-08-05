@@ -7,6 +7,10 @@ on:
   pull_request:
     branches: [ develop, main ]
 
+# Permisos básicos
+permissions:
+  contents: read
+
 jobs:
   simple-test:
     name: Simple Java Test
@@ -22,8 +26,21 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+        
     - name: Run simple test
       run: |
         echo "🚀 Starting simple test..."
         mvn test -Dtest="SimpleTest" -q
         echo "✅ Test completed successfully!"
+        
+    - name: Verify build
+      run: |
+        echo "🔍 Verifying project can build..."
+        mvn compile -q
+        echo "✅ Project builds successfully!"
