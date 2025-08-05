@@ -1,17 +1,21 @@
 language: java
 
-# Configuración específica para Travis CI
-dist: focal
-jdk: openjdk17
+# Configuración de JDK según documentación oficial
+jdk:
+  - openjdk17
+
+# Instalación de dependencias (requerido por documentación)
+install:
+  - mvn install -DskipTests=true -B -V
+
+# Test básico sin dependencias
+script:
+  - mvn test -Dtest="SimpleTest" -q
 
 # Cache Maven
 cache:
   directories:
     - $HOME/.m2
-
-# Test básico sin dependencias
-script:
-  - mvn test -Dtest="SimpleTest" -q
 
 # Solo incluir estas ramas
 branches:
