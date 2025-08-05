@@ -15,23 +15,33 @@ cache:
 
 # Variables de entorno para Travis
 env:
-  - DB_URL=jdbc:h2:mem:testdb
-  - DB_USERNAME=sa
-  - DB_PASSWORD=
-  - JWT_SECRET=test-secret-key-for-travis-ci-tests
+  global:
+    - DB_URL=jdbc:h2:mem:testdb
+    - DB_USERNAME=sa
+    - DB_PASSWORD=
+    - JWT_SECRET=test-secret-key-for-travis-ci-tests
 
 # Comandos antes de ejecutar el script
 before_script:
   - echo "Configurando entorno de pruebas..."
+  - echo "Java version:"
+  - java -version
+  - echo "Maven version:"
+  - mvn -version
 
 # Script principal (Maven ejecutará los tests automáticamente)
 script:
   - mvn clean test
-  - mvn clean compile
 
-# Ejecutar después del éxito
+# Solo compilar si los tests pasan
 after_success:
-  - echo "Tests ejecutados exitosamente!"
+  - mvn clean compile
+  - echo "✅ Tests ejecutados exitosamente!"
+
+# En caso de fallo
+after_failure:
+  - echo "❌ Los tests fallaron"
+  - cat target/surefire-reports/*.txt
 
 # Configuración de notificaciones
 notifications:
