@@ -1,0 +1,29 @@
+name: Simple Test
+
+# Ejecutar en push y pull requests
+on:
+  push:
+    branches: [ develop, main ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  simple-test:
+    name: Simple Java Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Run simple test
+      run: |
+        echo "🚀 Starting simple test..."
+        mvn test -Dtest="SimpleTest" -q
+        echo "✅ Test completed successfully!"
