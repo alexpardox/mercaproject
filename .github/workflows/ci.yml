@@ -3,9 +3,9 @@ name: CI/CD Pipeline
 # Trigger the workflow on push and pull requests
 on:
   push:
-    branches: [ develop, main, master ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ develop, main, master ]
+    branches: [ main, master ]
 
 # Permisos necesarios para que las acciones funcionen correctamente
 permissions:
