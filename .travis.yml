@@ -1,55 +1,19 @@
 language: java
 
-# Especifica la versión de Java
-jdk:
-  - openjdk17
-
-# Sistema operativo
-os: linux
+# Configuración específica para Travis CI
 dist: focal
+jdk: openjdk17
 
-# Cache para Maven dependencies
+# Cache Maven
 cache:
   directories:
     - $HOME/.m2
 
-# Variables de entorno mínimas para Travis
-env:
-  global:
-    - MAVEN_OPTS="-Xmx1024m"
-
-# Comandos antes de ejecutar el script
-before_script:
-  - echo "Configurando entorno de pruebas..."
-  - echo "Java version:"
-  - java -version
-  - echo "Maven version:"
-  - mvn -version
-
-# Script principal - Solo test básico sin dependencias
+# Test básico sin dependencias
 script:
-  - echo "🧪 Ejecutando test súper simple..."
-  - mvn test -Dtest="SimpleTest"
-  - echo "✅ Test básico completado"
+  - mvn test -Dtest="SimpleTest" -q
 
-# Solo mensaje de éxito
-after_success:
-  - echo "✅ Test básico completado exitosamente en Travis CI!"
-
-# En caso de fallo
-after_failure:
-  - echo "❌ El test básico falló"
-  - echo "Revisar logs de Maven arriba"
-
-# Configuración de notificaciones
-notifications:
-  email:
-    recipients:
-      - alexpardox@gmail.com
-    on_success: change
-    on_failure: always
-
-# Ramas a incluir
+# Solo incluir estas ramas
 branches:
   only:
     - main
