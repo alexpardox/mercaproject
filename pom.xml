@@ -102,7 +102,12 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<!-- Solo usamos PostgreSQL para todos los entornos -->
+		<!-- H2 Database for tests only -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -38,7 +38,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // Recursos públicos
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
-                .requestMatchers("/login", "/error", "/favicon.ico", "/h2-console/**").permitAll()
+                .requestMatchers("/login", "/error", "/favicon.ico").permitAll()
                 
                 // Rutas de administrador
                 .requestMatchers("/admin/**").hasRole("ADMIN")
