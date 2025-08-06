@@ -1,73 +1,199 @@
 # Sistema Mercadía - Gestión de Espacios Comerciales
 
+## Descripción
+
 Sistema web para la gestión de espacios comerciales en tiendas Mercadía del Grupo Iconn. Permite digitalizar el proceso de asignación de espacios a proveedores dentro de las tiendas.
 
-## Características Principales
+### Problema Identificado
 
-- **Arquitectura MVC** con Spring Boot y Thymeleaf
-- **Interfaz responsiva** y sencilla para uso en computadoras y dispositivos móviles
-- **Sistema de roles** (Administrador, Comercial, Tienda)
-- **CRUD completo** de proveedores y formularios
-- **Validación** de campos obligatorios
-- **Búsqueda y filtrado** avanzado
-- **Reportes** por tienda y proveedor
-- **Seguridad** con autenticación, sesiones y encriptación de contraseñas
-- **Base de datos PostgreSQL**
+Actualmente, el proceso de gestión y asignación de espacios comerciales a proveedores se realiza manualmente, lo que conlleva:
+- Duplicidad de información
+- Dificultad para rastrear acuerdos comerciales
+- Falta de visibilidad sobre espacios disponibles
+- Procesos administrativos lentos e ineficientes
 
-## Tecnologías Utilizadas
+### Solución
 
-- **Java 17**
-- **Spring Boot 3.5.4**
-- **Spring Security 6**
-- **Spring Data JPA**
-- **Thymeleaf**
-- **PostgreSQL**
-- **Bootstrap 5.3.0**
-- **Maven**
+Mercadía digitaliza todo el proceso mediante:
+- Registro centralizado de proveedores
+- Control de espacios comerciales por tienda
+- Gestión de formularios digitales
+- Sistema de roles específicos para cada nivel operativo
+- Reportes y análisis en tiempo real
 
-## Requisitos Previos
+## Tabla de Contenidos
 
-1. **Java 17** o superior
-2. **PostgreSQL 12** o superior
-3. **Maven 3.6** o superior
+- [Arquitectura](#arquitectura)
+- [Requerimientos](#requerimientos)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Uso](#uso)
+- [Pruebas](#pruebas-y-cicd)
+- [Despliegue](#-despliegue-en-producción)
+- [Contribución](#contribución)
+- [Licencia](#licencia)
+- [Contacto](#contacto)
 
-## Configuración de la Base de Datos
+## Arquitectura
 
-1. Crear la base de datos en PostgreSQL:
-```sql
-CREATE DATABASE mercadia_db;
-CREATE USER mercadia_user WITH PASSWORD 'mercadia_password';
-GRANT ALL PRIVILEGES ON DATABASE mercadia_db TO mercadia_user;
+El sistema Mercadía sigue una arquitectura MVC (Modelo-Vista-Controlador) implementada con Spring Boot:
+
+- **Modelo**: Entidades JPA para la persistencia de datos
+- **Vista**: Thymeleaf + Bootstrap para la interfaz de usuario
+- **Controlador**: Spring MVC para la lógica de negocio
+
+La arquitectura se compone de las siguientes capas:
+1. **Capa de Presentación**: Thymeleaf + Bootstrap
+2. **Capa de Controladores**: Spring MVC
+3. **Capa de Servicios**: Spring Services
+4. **Capa de Persistencia**: Spring Data JPA + PostgreSQL
+
+### Diagrama de Arquitectura
+
+```mermaid
+flowchart TD
+    Client[Cliente Web] --> FE[Frontend - Thymeleaf + Bootstrap]
+    FE --> Controller[Controladores Spring MVC]
+    Controller --> Service[Servicios de Negocio]
+    Service --> Repository[Repositorios JPA]
+    Repository --> DB[(PostgreSQL/Supabase)]
+    
+    Security[Spring Security] --> Controller
+    Config[Configuración] --> Service
 ```
 
-2. Ajustar la configuración en `src/main/resources/application.properties` si es necesario:
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/mercadia_db
-spring.datasource.username=mercadia_user
-spring.datasource.password=mercadia_password
-```
+## Requerimientos
 
-## Instalación y Ejecución
+### Requerimientos de Servidor
 
-1. **Clonar el repositorio** (si corresponde) o descargar el código fuente
+- **Servidor de Aplicación**: Compatible con Servlet 6.0+ (Tomcat embebido incluido)
+- **Servidor Web**: Apache, Nginx o similar para producción
+- **Base de Datos**: PostgreSQL 12+
+- **JDK**: Java 17+
+- **Memoria**: Mínimo 512MB RAM (1GB+ recomendado)
+- **Almacenamiento**: 500MB+ para la aplicación y logs
 
-2. **Compilar el proyecto**:
-```bash
-./mvnw clean compile
-```
+### Dependencias Principales
 
-3. **Ejecutar el proyecto**:
-```bash
-./mvnw spring-boot:run
-```
+- **Spring Boot**: 3.3.2
+- **Spring Security**: 6
+- **Spring Data JPA**: Incluido en Spring Boot
+- **Thymeleaf**: Incluido en Spring Boot
+- **PostgreSQL Driver**: Runtime
+- **Bootstrap**: 5.3.0 (WebJars)
+- **Maven**: 3.6+ (Gestión de dependencias)
 
-4. **Acceder al sistema**:
+## Instalación
+
+### Ambiente de Desarrollo
+
+1. **Requisitos previos**:
+   - Java 17+
+   - Maven 3.6+
+   - PostgreSQL 12+
+   - Git
+
+2. **Clonar el repositorio**:
+   ```bash
+   git clone https://github.com/alexpardox/mercaproject.git
+   cd mercaproject
+   ```
+
+3. **Configurar la base de datos PostgreSQL**:
+   ```sql
+   CREATE DATABASE mercadia_db;
+   CREATE USER mercadia_user WITH PASSWORD 'tu_contraseña_segura';
+   GRANT ALL PRIVILEGES ON DATABASE mercadia_db TO mercadia_user;
+   ```
+
+4. **Configurar variables de entorno**:
+   Crea un archivo `.env` en la raíz del proyecto (no incluirlo en Git):
+   ```env
+   DB_URL=jdbc:postgresql://localhost:5432/mercadia_db
+   DB_USERNAME=mercadia_user
+   DB_PASSWORD=tu_contraseña_segura
+   SPRING_PROFILES_ACTIVE=dev
+   ```
+
+5. **Compilar el proyecto**:
+   ```bash
+   ./mvnw clean compile
+   ```
+
+6. **Ejecutar la aplicación en modo desarrollo**:
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+
+7. **Acceder a la aplicación**:
    - URL: http://localhost:8080/mercadia
-   - El sistema se ejecuta en el puerto 8080 con el contexto `/mercadia`
+   - Credenciales predeterminadas: admin/password
+
+## Configuración
+
+### Archivos de Configuración
+
+- **`application.properties`**: Configuración principal
+- **`application-dev.properties`**: Configuración para desarrollo
+- **`application-production.properties`**: Configuración para producción
+- **`.env`**: Variables de entorno (no incluir en Git)
+- **`system.properties`**: Configuración para Heroku (versión de Java)
+- **`Procfile`**: Configuración para Heroku (comandos de inicio)
+
+### Configuración de Base de Datos
+
+La aplicación usa PostgreSQL para todos los entornos. Configura las siguientes variables:
+
+- `DB_URL`: URL de conexión a PostgreSQL
+- `DB_USERNAME`: Usuario de la base de datos
+- `DB_PASSWORD`: Contraseña de la base de datos
+
+### Configuración de Seguridad
+
+- `JWT_SECRET`: Clave secreta para la generación de tokens JWT
+- `JWT_EXPIRATION`: Tiempo de expiración del token en milisegundos
+
+### Configuración de Perfiles
+
+- **`dev`**: Para desarrollo local
+- **`production`**: Para entorno de producción (Heroku)
+
+## Uso
+
+### Usuarios Predefinidos
+
+El sistema inicializa automáticamente los siguientes usuarios (solo si no existen):
+
+| Usuario | Contraseña | Rol | Descripción |
+|---------|------------|-----|-------------|
+| `admin` | `password` | ADMINISTRADOR | Acceso completo al sistema |
+| `comercial` | `password` | COMERCIAL | Gestión de formularios y proveedores |
+| `tienda001` | `password` | TIENDA | Captura de formularios (Tienda TDA001) |
+
+### Funcionalidades por Rol
+
+#### Administrador
+- Gestión completa de usuarios
+- Gestión completa de proveedores
+- Gestión completa de formularios
+- Acceso a todos los reportes
+- Configuración del sistema
+
+#### Comercial
+- Visualización de todos los formularios
+- Gestión de proveedores
+- Reportes por tienda y proveedor
+- Edición de formularios de cualquier tienda
+
+#### Tienda
+- Captura de formularios para su tienda asignada
+- Visualización de formularios propios
+- Consulta de proveedores
+- Dashboard con estadísticas de su tienda
 
 ## Pruebas y CI/CD
 
-### Ejecutar Tests Localmente
+### Ejecutar Tests Manualmente
 
 ```bash
 # Ejecutar todos los tests
@@ -80,60 +206,18 @@ spring.datasource.password=mercadia_password
 ./mvnw clean test jacoco:report
 ```
 
-### Integración Continua con Travis CI
+### Integración Continua con GitHub Actions
 
-Este proyecto está configurado con Travis CI para ejecutar automáticamente las pruebas en cada push y pull request.
+Este proyecto está configurado con GitHub Actions para ejecutar automáticamente las pruebas en cada push y pull request.
 
-**Configuración Travis CI:**
-- ✅ **Archivo configurado**: `.travis.yml`
+**Configuración GitHub Actions:**
+- ✅ **Archivos configurados**: `.github/workflows/`
 - ✅ **Tests automáticos**: Se ejecutan en Java 17
-- ✅ **Base de datos de prueba**: H2 en memoria
+- ✅ **Base de datos de prueba**: PostgreSQL
 - ✅ **Notificaciones**: Email en fallos
 
 **Estados de Build:**
-- [![Build Status](https://app.travis-ci.com/alexpardox/mercaproject.svg?branch=main)](https://app.travis-ci.com/alexpardox/mercaproject)
-
-**Para configurar Travis CI en tu fork:**
-
-1. **Conectar a Travis CI:**
-   - Ve a [travis-ci.com](https://travis-ci.com)
-   - Inicia sesión con tu cuenta de GitHub
-   - Autoriza Travis CI
-   - Activa el repositorio `mercaproject`
-
-2. **Variables de entorno (opcional):**
-   ```bash
-   # En la configuración de Travis CI del repositorio
-   DB_URL=jdbc:h2:mem:testdb
-   DB_USERNAME=sa
-   DB_PASSWORD=
-   ```
-
-3. **Badge en README:**
-   ```markdown
-   [![Build Status](https://app.travis-ci.com/TU_USUARIO/mercaproject.svg?branch=main)](https://app.travis-ci.com/TU_USUARIO/mercaproject)
-   ```
-
-### Tests Incluidos
-
-- **Tests de Entidad**: `ProveedorTest` - Validación del modelo de datos
-- **Tests de Integración**: `MercaApplicationTests` - Carga del contexto Spring
-- **Tests Básicos**: `BasicIntegrationTest` - Validaciones fundamentales
-
-**Cobertura de Tests:**
-- ✅ Modelo de Proveedor: Estados, validaciones, constructores
-- ✅ Contexto de Spring: Carga de aplicación y dependencias
-- ✅ Configuración de Base de Datos: H2 para tests, PostgreSQL para producción
-
-## Usuarios de Prueba
-
-El sistema incluye usuarios de prueba que se crean automáticamente:
-
-| Usuario | Contraseña | Rol | Descripción |
-|---------|------------|-----|-------------|
-| `admin` | `password` | ADMINISTRADOR | Acceso completo al sistema |
-| `comercial` | `password` | COMERCIAL | Gestión de formularios y proveedores |
-| `tienda001` | `password` | TIENDA | Captura de formularios (Tienda TDA001) |
+- [![Build Status](https://github.com/alexpardox/mercaproject/actions/workflows/main.yml/badge.svg)](https://github.com/alexpardox/mercaproject/actions)
 
 ## Estructura del Proyecto
 
@@ -155,27 +239,6 @@ src/
     └── java/                # Pruebas unitarias
 ```
 
-## Funcionalidades por Rol
-
-### Administrador
-- Gestión completa de usuarios
-- Gestión completa de proveedores
-- Gestión completa de formularios
-- Acceso a todos los reportes
-- Configuración del sistema
-
-### Comercial
-- Visualización de todos los formularios
-- Gestión de proveedores
-- Reportes por tienda y proveedor
-- Edición de formularios de cualquier tienda
-
-### Tienda
-- Captura de formularios para su tienda asignada
-- Visualización de formularios propios
-- Consulta de proveedores
-- Dashboard con estadísticas de su tienda
-
 ## Entidades Principales
 
 ### Usuario
@@ -194,24 +257,6 @@ src/
 - Detalles del espacio (área, tipo, medidas)
 - Vigencia y precio acordado
 - Estados (Activo, Vencido, Cancelado)
-
-## Configuración de Desarrollo
-
-Para desarrollo, se recomienda:
-
-1. **Configurar perfil de desarrollo** en `application-dev.properties`:
-```properties
-spring.jpa.show-sql=true
-logging.level.com.merca.merca=DEBUG
-spring.thymeleaf.cache=false
-```
-
-2. **Usar H2 en memoria** para pruebas rápidas:
-```properties
-spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driver-class-name=org.h2.Driver
-spring.jpa.hibernate.ddl-auto=create-drop
-```
 
 ## Personalización
 
@@ -327,6 +372,45 @@ java -jar target/merca-0.0.1-SNAPSHOT.jar --spring.profiles.active=production
 - `.env.example` - Plantilla de variables de entorno
 - `application-production.properties` - Configuración para producción
 - `database/mercadia_postgresql.sql` - Script de base de datos para Supabase
+
+## 🗺️ Roadmap del Proyecto
+
+El desarrollo del Sistema Mercadía sigue la siguiente hoja de ruta:
+
+### Fase 1: Fundación (Completado)
+- ✅ Análisis de requerimientos y diseño de arquitectura
+- ✅ Configuración del entorno de desarrollo
+- ✅ Implementación del modelo de datos básico
+- ✅ Autenticación y gestión de usuarios
+- ✅ Interfaz de usuario básica con Thymeleaf
+
+### Fase 2: Funcionalidades Core (En Progreso)
+- ✅ Gestión completa de proveedores
+- ✅ Sistema de formularios digitales
+- ✅ Asignación de espacios comerciales
+- 🔄 Dashboard para visualización de datos
+- 🔄 Notificaciones y alertas
+
+### Fase 3: Optimización (Q3 2025)
+- 📅 Mejoras de rendimiento en consultas de base de datos
+- 📅 Implementación de caché para operaciones frecuentes
+- 📅 Optimización de interfaz de usuario
+- 📅 Mejoras de accesibilidad y UX
+- 📅 Refactorización de código legacy
+
+### Fase 4: Escalabilidad (Q4 2025)
+- 📅 Arquitectura de microservicios para módulos clave
+- 📅 API RESTful para integración con sistemas externos
+- 📅 Implementación de sistema de eventos y mensajería
+- 📅 Soporte para múltiples bases de datos
+- 📅 Mejoras en la seguridad y auditoría
+
+### Fase 5: Expansión (Q1-Q2 2026)
+- 📅 Aplicación móvil para tiendas
+- 📅 Análisis avanzado de datos y reportes personalizados
+- 📅 Inteligencia artificial para recomendaciones
+- 📅 Integración con sistemas ERP del grupo Iconn
+- 📅 Expansión a nuevas unidades de negocio
 
 ## Contribución
 
