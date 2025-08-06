@@ -35,7 +35,8 @@ jobs:
         
     - name: Run all tests
       run: |
-        echo "🧪 Running all tests..."
+        echo "🧪 Running all tests with test profile..."
+        export SPRING_PROFILES_ACTIVE=test
         mvn test
         echo "✅ All tests passed!"
         
